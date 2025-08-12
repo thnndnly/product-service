@@ -1,0 +1,30 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+      http://www.liquibase.org/xml/ns/dbchangelog
+      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+
+    <!-- Erzwingt NOT NULL, nachdem Daten befüllt sind -->
+    <changeSet id="5-enforce-not-null-owner-and-fk" author="karl">
+
+        <!-- Brich ab, wenn noch NULLs vorhanden sind -->
+        <preConditions onFail="HALT">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM sellers WHERE owner_user_id IS NULL
+            </sqlCheck>
+            <!-- products.seller_id ist bei dir bereits NOT NULL;
+                 falls du sicherheitshalber prüfen willst, entkommentieren:
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM products WHERE seller_id IS NULL
+            </sqlCheck>
+            -->
+        </preConditions>
+
+        <!-- NOT NULL für sellers.owner_user_id -->
+        <addNotNullConstraint
+                tableName="sellers"
+                columnName="owner_user_id"
+                columnDataType="uuid"/>
+    </changeSet>
+</databaseChangeLog>

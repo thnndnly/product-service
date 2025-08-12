@@ -1,0 +1,11 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+    http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+
+    <changeSet id="3-fix-currency-to-varchar3" author="karl">
+        <modifyDataType tableName="products" columnName="currency" newDataType="varchar(3)"/>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,48 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+      http://www.liquibase.org/xml/ns/dbchangelog
+      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+
+    <!-- 1) Verkäufer-Tabelle -->
+    <changeSet id="2-1-create-sellers" author="karl">
+        <createTable tableName="sellers">
+            <column name="id" type="uuid" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="contact_email" type="text"/>
+            <column name="created_at" type="timestamp with time zone" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createIndex indexName="ux_sellers_contact_email" tableName="sellers" unique="true">
+            <column name="contact_email"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- 2) seller_id-Spalte + FK in products -->
+    <changeSet id="2-2-add-seller-fk-to-products" author="karl">
+        <addColumn tableName="products">
+            <column name="seller_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <addForeignKeyConstraint
+                baseTableName="products"
+                baseColumnNames="seller_id"
+                referencedTableName="sellers"
+                referencedColumnNames="id"
+                constraintName="fk_products_seller"
+                onDelete="RESTRICT"
+                onUpdate="CASCADE"/>
+
+        <createIndex indexName="ix_products_seller_id" tableName="products">
+            <column name="seller_id"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
