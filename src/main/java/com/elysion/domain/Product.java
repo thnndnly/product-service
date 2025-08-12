@@ -32,11 +32,15 @@ public class Product extends PanacheEntityBase {
     @Column(name = "created_at", nullable = false)
     public OffsetDateTime createdAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id", nullable = false)
+    public Seller seller;
+
     // Convenience constructor
     public Product() {
     }
 
-    public Product(UUID id, String sku, String name, String description, Integer priceCents, String currency, OffsetDateTime createdAt) {
+    public Product(UUID id, String sku, String name, String description, Integer priceCents, String currency, OffsetDateTime createdAt, Seller seller) {
         this.id = id;
         this.sku = sku;
         this.name = name;
@@ -44,5 +48,6 @@ public class Product extends PanacheEntityBase {
         this.priceCents = priceCents;
         this.currency = currency;
         this.createdAt = createdAt;
+        this.seller = seller;
     }
 }
