@@ -1,0 +1,36 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+    http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+
+    <changeSet id="9-1-products-indexes" author="karl">
+        <createIndex indexName="ix_products_status" tableName="products">
+            <column name="status"/>
+        </createIndex>
+        <createIndex indexName="ix_products_is_available" tableName="products">
+            <column name="is_available"/>
+        </createIndex>
+        <createIndex indexName="ix_products_price_cents" tableName="products">
+            <column name="price_cents"/>
+        </createIndex>
+        <createIndex indexName="ix_products_seller_id" tableName="products">
+            <column name="seller_id"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- 2) Partial Index (nur PostgreSQL) -->
+    <changeSet id="9-2-products-partial-index-published" author="karl">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM pg_indexes WHERE indexname = 'ix_products_published_only'
+            </sqlCheck>
+        </preConditions>
+        <sql>
+            CREATE INDEX ix_products_published_only
+                ON products (price_cents, is_available)
+                WHERE status = 'PUBLISHED';
+        </sql>
+    </changeSet>
+</databaseChangeLog>

@@ -10,4 +10,8 @@
     <include file="db/changelog/changes/3-fix-currency-varchar.xml"/>
     <include file="db/changelog/changes/4-sellers-owner-user-id.xml"/>
     <include file="db/changelog/changes/5-set-not-null-owner-and-fk.xml"/>
+    <include file="db/changelog/changes/6-products-status-publish-archive.xml"/>
+    <include file="db/changelog/changes/7-products-inventory.xml"/>
+    <include file="db/changelog/changes/8-products-pricing.xml"/>
+    <include file="db/changelog/changes/9-products-indexes.xml"/>
 </databaseChangeLog>

@@ -1,0 +1,33 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+    http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+
+    <changeSet id="6-1-products-status" author="karl">
+        <!-- status: DRAFT | PUBLISHED | ARCHIVED -->
+        <addColumn tableName="products">
+            <column name="status" type="varchar(16)" defaultValue="DRAFT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="published_at" type="timestamp with time zone"/>
+            <column name="archived_at" type="timestamp with time zone"/>
+        </addColumn>
+    </changeSet>
+
+    <!-- 2) CHECK-Constraint hinzufügen (nur wenn noch nicht vorhanden) -->
+    <changeSet id="6-2-products-status-check" author="karl">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM information_schema.table_constraints
+                WHERE table_name = 'products' AND constraint_name = 'ck_products_status'
+            </sqlCheck>
+        </preConditions>
+        <sql>
+            ALTER TABLE products
+                ADD CONSTRAINT ck_products_status
+                    CHECK (status IN ('DRAFT','PUBLISHED','ARCHIVED'));
+        </sql>
+    </changeSet>
+</databaseChangeLog>

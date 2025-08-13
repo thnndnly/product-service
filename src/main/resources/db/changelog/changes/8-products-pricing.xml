@@ -1,0 +1,45 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+    http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+
+    <changeSet id="8-1-products-pricing" author="karl">
+        <!-- aktueller Preis existiert bereits: price_cents (NOT NULL) -->
+        <addColumn tableName="products">
+            <!-- Optionaler Originalpreis für Strike-Through/Rabattanzeige -->
+            <column name="original_price_cents" type="int"/>
+        </addColumn>
+    </changeSet>
+
+    <!-- 2) CHECK (price_cents >= 0) -->
+    <changeSet id="8-2-products-price-check" author="karl">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM information_schema.table_constraints
+                WHERE table_name = 'products' AND constraint_name = 'ck_products_price_nonneg'
+            </sqlCheck>
+        </preConditions>
+        <sql>
+            ALTER TABLE products
+                ADD CONSTRAINT ck_products_price_nonneg
+                    CHECK (price_cents &gt;= 0);
+        </sql>
+    </changeSet>
+
+    <!-- 3) CHECK (original_price_cents IS NULL OR >= 0) -->
+    <changeSet id="8-3-products-original-price-check" author="karl">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM information_schema.table_constraints
+                WHERE table_name = 'products' AND constraint_name = 'ck_products_original_price_nonneg'
+            </sqlCheck>
+        </preConditions>
+        <sql>
+            ALTER TABLE products
+                ADD CONSTRAINT ck_products_original_price_nonneg
+                    CHECK (original_price_cents IS NULL OR original_price_cents &gt;= 0);
+        </sql>
+    </changeSet>
+</databaseChangeLog>
